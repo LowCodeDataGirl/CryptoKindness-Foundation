@@ -1,0 +1,15 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "This is the frontend of the donation smart contract",
+  "license": "ISC",
+  "author": "Peace Aisosa",
+  "type": "module",
+  "main": "src/js/app,js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ethers": "^6.15.0"
+  }
+}
