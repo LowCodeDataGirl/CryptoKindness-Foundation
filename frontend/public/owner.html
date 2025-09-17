@@ -1,17 +1,145 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Owner Dashboard</title>
+<head>
+    <title>Owner Dashboard - CryptoKindness Foundation</title>
+    <link rel="stylesheet" href="../src/css/main.css">
+    <link rel="stylesheet" href="../src/css/owner.css">
 
-    </head>
-    <body>
-        <input type="number" id="withdraw-amount" placeholder="Enter amount to withdraw" />
-        <button id="withdraw-btn">Withdraw</button>
-        <button id="withdraw-all-btn">Withdraw All</button>
-        <p> Contract Balance: <span id="contract-balance"> Loading...</span>ETH</p>
- 
-        <script type="module" src="../src/js/app.js"></script>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <div class="logo">CryptoKindness</div>
+            <ul class="nav-links">
+                <li><a href="../public/index.html" class="nav-link">Home</a></li>
+                <li><a href="../public/about.html" class="nav-link">About</a></li>
+                <li><a href="../public/impact.html" class="nav-link">Impact</a></li>
+                <li><a href="../public/donate.html" class="nav-link">Donate</a></li>
+                <li><a href="../public/owner.html" class="nav-link">Owner</a></li>
+            </ul>
+        </nav>
+    </header>
 
- 
-    </body>
+    <section class="owner-hero">
+        <div class="container text-center">
+            <h1>Foundation Management Dashboard</h1>
+            <p class="hero-subtitle">Securely manage funds and monitor contract operations</p>
+        </div>
+    </section>
+
+    <section class="owner-interface">
+        <div class="container">
+            <div class="owner-grid">
+                <!-- Left Column: Contract Status -->
+                <div class="status-panel">
+                    <div class="status-card">
+                        <h3>Contract Status</h3>
+                        <div class="balance-display">
+                            <span class="balance-label">Available Balance</span>
+                            <span id="contract-balance" class="balance-amount">Loading...</span>
+                        </div>
+                         
+                        <div class="contract-info">
+                            <div class="contract-row">
+                              <strong>Contract Address:</strong>
+                              <code class="contract-address" id="contract-address">0x1234...5678</code>
+                              <button class="copy-btn" id="copy-address">Copy</button>
+                            </div>
+                            <div class="contract-row">
+                              <strong>Network:</strong> <span>Ethereum Sepolia</span>
+                            </div>
+                          </div>
+                          
+                          <!-- Optional toast -->
+                          <div class="toast" id="toast">Copied</div>
+                          
+                    </div>
+                </div>
+
+                <!-- Right Column: Withdrawal Controls -->
+                <div class="withdrawal-panel">
+                    <div class="withdrawal-card">
+                        <h3>Withdraw Funds</h3>
+                        <p>Transfer contract funds to the owner wallet</p>
+                        
+                        <div class="withdrawal-form">
+                            <div class="form-group">
+                                <label for="withdraw-amount">Withdrawal Amount (ETH)</label>
+                                <input type="number" id="withdraw-amount" placeholder="Enter amount to withdraw" class="form-input">
+                                <small class="form-help">Must not exceed available balance</small>
+                            </div>
+                            
+                            <div class="withdrawal-buttons">
+                                <button id="withdraw-btn" class="btn btn-primary">Withdraw Amount</button>
+                                <button id="withdraw-all-btn" class="btn btn-secondary">Withdraw All</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+          const btn = document.getElementById('copy-address');
+          const addressEl = document.getElementById('contract-address');
+          const toast = document.getElementById('toast');
+      
+          function showToast(msg) {
+            if (!toast) return;
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1400);
+          }
+      
+          function getAddressText() {
+            // Prefer the full value if provided
+            const full = addressEl?.dataset?.full;
+            const text = full && full.trim().length ? full.trim() : (addressEl?.textContent || '').trim();
+            return text;
+          }
+      
+          async function copyWithFallback(text) {
+            try {
+              if (window.isSecureContext && navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+              }
+              throw new Error('Clipboard API not available or insecure context');
+            } catch {
+              // Fallback: temporary textarea
+              const ta = document.createElement('textarea');
+              ta.value = text;
+              // Keep it off-screen but selectable
+              ta.style.position = 'fixed';
+              ta.style.top = '-1000px';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.focus();
+              ta.select();
+              let ok = false;
+              try { ok = document.execCommand('copy'); } catch {}
+              document.body.removeChild(ta);
+              return ok;
+            }
+          }
+      
+          btn?.addEventListener('click', async () => {
+            const text = getAddressText();
+            if (!text) {
+              showToast('No address to copy');
+              return;
+            }
+            const ok = await copyWithFallback(text);
+            showToast(ok ? 'Address copied' : 'Copy failed');
+          });
+        })();
+      </script>
+      
+
+      
+
+    <script type="module" src="../src/js/app.js"></script>
+</body>
 </html>

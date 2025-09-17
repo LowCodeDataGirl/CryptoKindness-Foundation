@@ -1,0 +1,135 @@
+.donate-hero {
+  background-color: var(--primary-blue);
+  color: var(--white);
+  padding: var(--space-16) 0;
+}
+
+.donate-hero h1 {
+  color: var(--white);
+  margin-bottom: var(--space-4);
+}
+
+.donation-interface {
+  padding: var(--space-16) 0;
+  background-color: var(--light-gray);
+}
+
+.donation-grid {
+  display: flex;
+  gap: var(--space-12);
+  align-items: flex-start;
+}
+
+.donation-form-wrapper {
+  flex: 1;
+  max-width: 500px;
+}
+
+.donation-card {
+  background-color: var(--white);
+  padding: var(--space-8);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.donation-card h2 {
+  color: var(--primary-blue);
+  margin-bottom: var(--space-2);
+}
+
+.wallet-section {
+  margin: var(--space-6) 0;
+  text-align: center;
+}
+
+.wallet-status {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--medium-gray);
+}
+
+.donation-form {
+  margin-top: var(--space-6);
+}
+
+.form-group {
+  margin-bottom: var(--space-6);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+  color: var(--dark-gray);
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-4);
+  border: 2px solid var(--light-gray);
+  border-radius: 6px;
+  font-size: var(--text-base);
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+
+.form-help {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--medium-gray);
+}
+
+.btn-large {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-lg);
+}
+
+.impact-info {
+  flex: 1;
+  background-color: var(--white);
+  padding: var(--space-6);
+  border-radius: 8px;
+  border-left: 4px solid var(--warm-gold);
+}
+
+.impact-examples {
+  margin: var(--space-6) 0;
+}
+
+.impact-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.impact-amount {
+  font-weight: 700;
+  color: var(--warm-gold);
+  font-size: var(--text-lg);
+}
+
+.impact-result {
+  flex: 1;
+  margin-left: var(--space-4);
+  color: var(--dark-gray);
+}
+
+.transparency-note {
+  background-color: var(--light-gray);
+  padding: var(--space-4);
+  border-radius: 6px;
+  margin-top: var(--space-6);
+}
+
+.transparency-note h4 {
+  color: var(--primary-blue);
+  margin-bottom: var(--space-2);
+}

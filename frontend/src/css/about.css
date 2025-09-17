@@ -1,0 +1,154 @@
+.about-hero {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    padding: var(--space-16) 0;
+  }
+  
+  .about-hero h1 {
+    color: var(--white);
+    margin-bottom: var(--space-6);
+  }
+  
+  .our-story {
+    padding: var(--space-16) 0;
+    background-color: var(--white);
+  }
+
+  .mission-vision {
+    padding: var(--space-16) 0;
+    background-color: var(--light-gray);
+  }
+  
+  .mission-vision-grid {
+    display: flex;
+    gap: var(--space-8);
+     
+  }
+  
+  .mission-item, .vision-item {
+    flex: 1;
+    background-color: var(--white);
+    padding: var(--space-6);
+    border-radius: 8px;
+  }
+  
+  .mission-item h3 {
+    color: var(--warm-gold);
+    margin-bottom: var(--space-4);
+  }
+  
+  .vision-item h3 {
+    color: var(--primary-blue);
+    margin-bottom: var(--space-4);
+  }
+
+  .team {
+    padding: var(--space-16) 0;
+    background-color: var(--white);
+  }
+  
+  .team-grid {
+    display: flex;
+    gap: var(--space-6);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .team-member {
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+    background-color: var(--light-gray);
+    padding: var(--space-6);
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .team-member h3 {
+    color: var(--primary-blue);
+    margin-bottom: var(--space-2);
+  }
+  
+  .role {
+    color: var(--warm-gold);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-4);
+  }
+  
+  .team-member p:last-child {
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+
+  .transparency {
+    padding: var(--space-16) 0;
+    background-color: var(--light-gray);
+  }
+  
+  .transparency-grid {
+    display: flex;
+    gap: var(--space-8);
+    margin-bottom: var(--space-8);
+  }
+  
+  .transparency-item {
+    flex: 1;
+    background-color: var(--white);
+    padding: var(--space-6);
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .transparency-item h3 {
+    color: var(--primary-blue);
+    margin-bottom: var(--space-4);
+  }
+
+  .get-involved {
+    padding: var(--space-16) 0;
+    background-color: var(--white);
+  }
+  
+  .involvement-options {
+    display: flex;
+    gap: var(--space-8);
+    align-items: stretch;
+  }
+  
+  .involvement-item {
+    flex: 1;
+    text-align: center;
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .involvement-item .btn {
+    margin-top: auto;
+  }
+  
+  .contact {
+    padding: var(--space-16) 0;
+    background-color: var(--primary-blue);
+    color: var(--white);
+  }
+  
+  .contact h2 {
+    color: var(--white);
+  }
+
+  .early-proof {
+    padding: var(--space-8) 0;
+    background-color: var(--warm-gold);
+    color: var(--white);
+  }
+  
+  .proof-statement {
+    font-size: var(--text-lg);
+    margin-bottom: 0;
+  }
+

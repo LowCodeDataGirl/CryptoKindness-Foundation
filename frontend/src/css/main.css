@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&family=Source+Sans+Pro:wght@400;500;600&display=swap');:root {
+    
+    
+    --primary-blue: #1e3a8a;
+    --warm-gold: #f59e0b;
+    --soft-green: #10b981;
+    --coral-red: #ef4444;
+    --dark-gray:  #374151;
+    --medium-gray: #6b7280;
+    --light-gray: #f3f4f6;
+    --white: #ffffff;
+
+    --font-heading: 'Source Sans Pro', serif;
+    --font-body: 'Source Sans Pro', sans-serif;
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+    --text-3xl: 2.5rem;
+    --text-4xl: 3rem;
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+
+
+}
+
+body {
+    background-color: var(--white);
+    color: var(--dark-gray);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+}
+
+h1 {
+    font-family: var(--font-heading);
+    font-size: var(--text-4xl);
+    color: var(--primary-blue);
+    margin-bottom: var(--space-6);
+}
+
+h2 {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    color: var(--primary-blue);
+    margin-bottom: var(--space-4);
+}
+
+h3 {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    color: var(--dark-gray);
+    margin-bottom: var(--space-4);
+}
+
+p { 
+    margin-bottom: var(--space-4);
+    line-height: 1.6;
+
+}
+
+ .btn {
+    padding: var(--space-4) var(--space-6);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+   .btn-primary {
+    background-color: var(--warm-gold);
+    color: var(--white);
+  }
+  
+  .btn-primary:hover {
+    background-color: #d97706;  
+  }
+  
+   .btn-secondary {
+    background-color: var(--primary-blue);
+    color: var(--white);
+  }
+
+/* Navigation */
+.header {
+    background-color: var(--white);
+    padding: var(--space-4) 0;
+    border-bottom: 2px solid var(--light-gray);
+  }
+  
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+  
+  .logo {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    color: var(--primary-blue);
+    font-weight: bold;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: var(--space-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .nav-link {
+    color: var(--dark-gray);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .nav-link:hover {
+    color: var(--primary-blue);
+  }
+
+ .card {
+    background-color: var(--white);
+    border-radius: 8px;
+    padding: var(--space-6);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--space-6);
+  }
+  
+   .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+  
+   .text-center { text-align: center; }
+  .text-gold { color: var(--warm-gold); }
+  .mb-8 { margin-bottom: var(--space-8); }
+
+  
