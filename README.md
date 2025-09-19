@@ -8,6 +8,8 @@
 
 **Stack:** HTML, CSS, JavaScript, ethers@5 via CDN
 
+**Live link:** cryptokindness.netlify.app
+
 **Live demo:**  
 
 **Screenshots:**  
