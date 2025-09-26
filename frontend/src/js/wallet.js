@@ -1,79 +1,65 @@
-import { NETWORK_CONFIG, WALLETCONNECT_PROJECT_ID } from './utils/constants.js';
+import { NETWORK_CONFIG } from './utils/constants.js';
 
 let provider;
 let signer;
-let thirdwebConnect;
-
-// Initialize Thirdweb Connect
-async function initThirdwebConnect() {
-    if (!window.ThirdwebConnect) {
-        console.error('Thirdweb Connect not loaded');
-        return;
-    }
-
-    try {
-        thirdwebConnect = window.ThirdwebConnect.ConnectWallet({
-            theme: "light",
-            modalSize: "wide",
-            welcomeScreen: {
-                title: "Connect to CryptoKindness",
-                subtitle: "Choose your wallet to start donating"
-            },
-            chains: [{
-                chainId: NETWORK_CONFIG.chainId,
-                name: NETWORK_CONFIG.chainName,
-                rpcUrls: [NETWORK_CONFIG.rpcUrl],
-                blockExplorers: [{
-                    name: "Etherscan",
-                    url: NETWORK_CONFIG.blockExplorer
-                }]
-            }]
-        });
-        
-        console.log('Thirdweb Connect initialized');
-    } catch (error) {
-        console.error('Thirdweb Connect initialization failed:', error);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initThirdwebConnect, 1000);
-});
 
 export async function requestConnection() {
-    if (!thirdwebConnect) {
-        alert('Wallet connection not ready. Please refresh the page.');
-        return false;
-    }
-
-    try {
-        // Open wallet selection modal
-        const wallet = await thirdwebConnect.connect();
-        
-        // Get ethers provider and signer
-        provider = new window.ethers.providers.Web3Provider(wallet.getSigner().provider);
-        signer = provider.getSigner();
-        
-        // Update UI
-        const connectBtn = document.getElementById("connect-wallet");
-        if (connectBtn) connectBtn.textContent = "Connected";
-        
-        const walletStatus = document.getElementById("wallet-status");
-        if (walletStatus) {
-            const address = await signer.getAddress();
-            walletStatus.textContent = `Connected: ${address.substring(0, 6)}...${address.substring(38)}`;
+    if (window.ethereum) {
+        try {
+            // Request accounts
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            
+            // Switch to correct network
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: `0x${NETWORK_CONFIG.chainId.toString(16)}` }]
+                });
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: `0x${NETWORK_CONFIG.chainId.toString(16)}`,
+                            chainName: NETWORK_CONFIG.chainName,
+                            rpcUrls: [NETWORK_CONFIG.rpcUrl],
+                            blockExplorerUrls: [NETWORK_CONFIG.blockExplorer],
+                            nativeCurrency: {
+                                name: 'ETH',
+                                symbol: 'ETH',
+                                decimals: 18
+                            }
+                        }]
+                    });
+                }
+            }
+            
+            provider = new window.ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            
+            // Update UI
+            const connectBtn = document.getElementById("connect-wallet");
+            if (connectBtn) connectBtn.textContent = "Connected";
+            
+            const walletStatus = document.getElementById("wallet-status");
+            if (walletStatus) {
+                const address = await signer.getAddress();
+                walletStatus.textContent = `Connected: ${address.substring(0, 6)}...${address.substring(38)}`;
+            }
+            
+            return true;
+            
+        } catch (error) {
+            console.error("Connection failed:", error);
+            alert("Connection failed: " + error.message);
+            return false;
         }
-        
-        console.log('Wallet connected successfully');
-        return true;
-        
-    } catch (error) {
-        console.error("Connection failed:", error);
-        alert("Connection cancelled or failed");
+    } else {
+        alert("Please install MetaMask or another Web3 wallet");
         return false;
     }
 }
 
 export function getProvider() { return provider; }
 export function getSigner() { return signer; }
-export function isWalletInstalled() { return !!thirdwebConnect; }
+export function isWalletInstalled() { return !!window.ethereum; }
