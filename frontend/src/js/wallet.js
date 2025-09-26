@@ -1,77 +1,37 @@
 import { NETWORK_CONFIG, WALLETCONNECT_PROJECT_ID } from '/src/js/utils/constants.js';
 
-// Web3Modal configuration
-let web3Modal;
 let provider;
 let signer;
 
-// Initialize Web3Modal
+// Test Web3Modal loading
 function initWeb3Modal() {
-    // Check if Web3Modal loaded correctly
-    if (!window.Web3Modal) {
-        console.error('Web3Modal not loaded');
-        return;
-    }
-
-    const { createWeb3Modal, defaultWagmiConfig } = window.Web3Modal;
+    console.log('Checking Web3Modal:', window.Web3Modal);
+    console.log('Available properties:', Object.keys(window.Web3Modal || {}));
     
-    if (!createWeb3Modal) {
-        console.error('createWeb3Modal not found');
+    if (!window.Web3Modal) {
+        console.error('Web3Modal not loaded - trying fallback to basic wallet connection');
         return;
     }
-
-    try {
-        web3Modal = createWeb3Modal({
-            projectId: WALLETCONNECT_PROJECT_ID,
-            chains: [{
-                id: NETWORK_CONFIG.chainId,
-                name: NETWORK_CONFIG.chainName,
-                network: 'sepolia',
-                nativeCurrency: {
-                    decimals: 18,
-                    name: 'ETH',
-                    symbol: 'ETH',
-                },
-                rpcUrls: {
-                    default: {
-                        http: [NETWORK_CONFIG.rpcUrl],
-                    },
-                    public: {
-                        http: [NETWORK_CONFIG.rpcUrl],
-                    },
-                },
-                blockExplorers: {
-                    default: { name: 'Sepolia', url: NETWORK_CONFIG.blockExplorer },
-                },
-            }],
-            metadata: {
-                name: 'CryptoKindness Foundation',
-                description: 'Transparent crypto donations',
-                url: window.location.origin,
-                icons: [`${window.location.origin}/favicon.ico`]
-            }
-        });
-    } catch (error) {
-        console.error('Web3Modal initialization failed:', error);
-    }
+    
+    console.log('Web3Modal loaded successfully');
 }
 
 // Initialize when DOM loads
-document.addEventListener('DOMContentLoaded', initWeb3Modal);
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initWeb3Modal, 100); // Small delay to ensure script loaded
+});
 
 export async function requestConnection() {
-    if (!web3Modal) {
-        alert('Web3Modal not initialized');
-        return false;
-    }
-
-    try {
-        await web3Modal.open();
-        
-        // Get the connected provider and signer
-        if (window.ethereum) {
+    console.log('Attempting connection...');
+    
+    // Fallback to basic MetaMask connection for now
+    if (window.ethereum) {
+        try {
+            const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
             provider = new window.ethers.providers.Web3Provider(window.ethereum);
             signer = provider.getSigner();
+            
+            console.log("Connected account:", accounts);
             
             // Update UI
             const connectBtn = document.getElementById("connect-wallet");
@@ -84,17 +44,21 @@ export async function requestConnection() {
                 const address = await signer.getAddress();
                 walletStatus.textContent = `Connected: ${address.substring(0, 6)}...${address.substring(38)}`;
             }
+            
+            return true;
+        } catch (error) {
+            console.error("Connection failed:", error);
+            alert("Connection failed: " + error.message);
+            return false;
         }
-        
-        return true;
-    } catch (error) {
-        console.error("Connection failed:", error);
+    } else {
+        alert("No wallet found. Please install MetaMask.");
         return false;
     }
 }
 
 export function isWalletInstalled() {
-    return true;
+    return !!window.ethereum;
 }
 
 export function getProvider() {
