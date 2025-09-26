@@ -303,3 +303,5 @@ export const MESSAGES = {
     DONATION_SUCCESS: "Thank you for your donation!",
     TRANSACTION_PENDING: "Transaction is pending...",
 };
+
+export const WALLETCONNECT_PROJECT_ID = "e4d2d9c344e54cf486fc1e20a69495f7";
