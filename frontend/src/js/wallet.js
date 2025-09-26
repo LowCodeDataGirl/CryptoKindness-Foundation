@@ -1,4 +1,4 @@
-import { NETWORK_CONFIG, WALLETCONNECT_PROJECT_ID } from '/src/js/utils/constants.js';
+import { NETWORK_CONFIG, WALLETCONNECT_PROJECT_ID } from './utils/constants.js';
 
 let provider;
 let signer;

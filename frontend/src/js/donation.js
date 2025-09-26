@@ -1,5 +1,5 @@
 import { ethers } from 'https://cdn.skypack.dev/ethers@5.7.2';
-import { CONTRACT_ADDRESS, CONTRACT_ABI, MIN_DONATION_ETH } from "/src/js/utils/constants.js";
+import { CONTRACT_ADDRESS, CONTRACT_ABI, MIN_DONATION_ETH } from './utils/constants.js';
 import { getProvider, getSigner } from './wallet.js';
 
 function validateDonation(amount, message) {
