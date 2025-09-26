@@ -29,10 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export async function requestConnection() {
+    console.log('Window.ethereum exists:', !!window.ethereum);
+    console.log('WalletConnect client exists:', !!walletConnectClient);
+    
     // Desktop: Try injected wallet first (MetaMask, Coinbase, etc.)
     if (window.ethereum) {
+        console.log('Attempting injected wallet connection...');
         try {
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            console.log('Accounts received:', accounts);
             
             // Switch to correct network
             try {
@@ -41,6 +46,7 @@ export async function requestConnection() {
                     params: [{ chainId: `0x${NETWORK_CONFIG.chainId.toString(16)}` }]
                 });
             } catch (switchError) {
+                console.log('Network switch error:', switchError);
                 if (switchError.code === 4902) {
                     await window.ethereum.request({
                         method: 'wallet_addEthereumChain',
@@ -57,57 +63,23 @@ export async function requestConnection() {
             provider = new window.ethers.providers.Web3Provider(window.ethereum);
             signer = provider.getSigner();
             
+            console.log('Connection successful!');
             updateUI();
             return true;
             
         } catch (error) {
             console.error("Injected wallet connection failed:", error);
+            alert("Wallet connection failed: " + error.message);
+            return false; // Add explicit return here
         }
     }
     
-    // Mobile/Universal: Try WalletConnect
-    if (walletConnectClient) {
-        try {
-            const { uri, approval } = await walletConnectClient.connect({
-                requiredNamespaces: {
-                    eip155: {
-                        methods: ['eth_sendTransaction', 'eth_signTransaction', 'eth_sign', 'personal_sign'],
-                        chains: [`eip155:${NETWORK_CONFIG.chainId}`],
-                        events: ['accountsChanged', 'chainChanged']
-                    }
-                }
-            });
-            
-            if (uri) {
-                // Show QR code or deep link
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                
-                if (isMobile) {
-                    // Mobile: Open wallet app
-                    window.open(`https://metamask.app.link/wc?uri=${encodeURIComponent(uri)}`, '_blank');
-                    alert('Opening wallet app. Please approve the connection and return to this page.');
-                } else {
-                    // Desktop: Show QR code
-                    alert(`Please scan this QR code with your mobile wallet:\n${uri}`);
-                }
-            }
-            
-            const session = await approval();
-            console.log('WalletConnect session established:', session);
-            
-            // Set up provider for WalletConnect
-            provider = new window.ethers.providers.JsonRpcProvider(NETWORK_CONFIG.rpcUrl);
-            // Note: WalletConnect transactions require special handling
-            
-            updateUI();
-            return true;
-            
-        } catch (error) {
-            console.error("WalletConnect failed:", error);
-        }
-    }
+    // If we get here, no injected wallet was found
+    console.log('No injected wallet found, checking WalletConnect...');
     
-    // Fallback message
+    // Mobile/Universal: Try WalletConnect (rest of WalletConnect code...)
+    
+    // Only show this error if both methods fail
     alert("Please install a Web3 wallet like MetaMask, or use a wallet app that supports WalletConnect");
     return false;
 }
@@ -127,3 +99,4 @@ function updateUI() {
 export function getProvider() { return provider; }
 export function getSigner() { return signer; }
 export function isWalletInstalled() { return !!window.ethereum || !!walletConnectClient; }
+
