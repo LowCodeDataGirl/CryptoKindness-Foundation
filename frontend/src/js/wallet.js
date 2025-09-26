@@ -2,69 +2,128 @@ import { NETWORK_CONFIG, WALLETCONNECT_PROJECT_ID } from '/src/js/utils/constant
 
 let provider;
 let signer;
+let walletConnectClient;
 
-// Test Web3Modal loading
-function initWeb3Modal() {
-    console.log('Checking Web3Modal:', window.Web3Modal);
-    console.log('Available properties:', Object.keys(window.Web3Modal || {}));
-    
-    if (!window.Web3Modal) {
-        console.error('Web3Modal not loaded - trying fallback to basic wallet connection');
-        return;
+// Initialize WalletConnect
+async function initWalletConnect() {
+    try {
+        if (window.WalletConnectSignClient) {
+            walletConnectClient = await window.WalletConnectSignClient.init({
+                projectId: WALLETCONNECT_PROJECT_ID,
+                metadata: {
+                    name: 'CryptoKindness Foundation',
+                    description: 'Transparent crypto donations',
+                    url: window.location.origin,
+                    icons: [`${window.location.origin}/favicon.ico`]
+                }
+            });
+        }
+    } catch (error) {
+        console.log('WalletConnect init failed, will use injected wallet only:', error);
     }
-    
-    console.log('Web3Modal loaded successfully');
 }
 
-// Initialize when DOM loads
+// Initialize on load
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initWeb3Modal, 100); // Small delay to ensure script loaded
+    setTimeout(initWalletConnect, 500);
 });
 
 export async function requestConnection() {
-    console.log('Attempting connection...');
-    
-    // Fallback to basic MetaMask connection for now
+    // Desktop: Try injected wallet first (MetaMask, Coinbase, etc.)
     if (window.ethereum) {
         try {
-            const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            
+            // Switch to correct network
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: `0x${NETWORK_CONFIG.chainId.toString(16)}` }]
+                });
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: `0x${NETWORK_CONFIG.chainId.toString(16)}`,
+                            chainName: NETWORK_CONFIG.chainName,
+                            rpcUrls: [NETWORK_CONFIG.rpcUrl],
+                            blockExplorerUrls: [NETWORK_CONFIG.blockExplorer]
+                        }]
+                    });
+                }
+            }
+            
             provider = new window.ethers.providers.Web3Provider(window.ethereum);
             signer = provider.getSigner();
             
-            console.log("Connected account:", accounts);
-            
-            // Update UI
-            const connectBtn = document.getElementById("connect-wallet");
-            if (connectBtn) {
-                connectBtn.textContent = "Connected";
-            }
-            
-            const walletStatus = document.getElementById("wallet-status");
-            if (walletStatus) {
-                const address = await signer.getAddress();
-                walletStatus.textContent = `Connected: ${address.substring(0, 6)}...${address.substring(38)}`;
-            }
-            
+            updateUI();
             return true;
+            
         } catch (error) {
-            console.error("Connection failed:", error);
-            alert("Connection failed: " + error.message);
-            return false;
+            console.error("Injected wallet connection failed:", error);
         }
-    } else {
-        alert("No wallet found. Please install MetaMask.");
-        return false;
+    }
+    
+    // Mobile/Universal: Try WalletConnect
+    if (walletConnectClient) {
+        try {
+            const { uri, approval } = await walletConnectClient.connect({
+                requiredNamespaces: {
+                    eip155: {
+                        methods: ['eth_sendTransaction', 'eth_signTransaction', 'eth_sign', 'personal_sign'],
+                        chains: [`eip155:${NETWORK_CONFIG.chainId}`],
+                        events: ['accountsChanged', 'chainChanged']
+                    }
+                }
+            });
+            
+            if (uri) {
+                // Show QR code or deep link
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    // Mobile: Open wallet app
+                    window.open(`https://metamask.app.link/wc?uri=${encodeURIComponent(uri)}`, '_blank');
+                    alert('Opening wallet app. Please approve the connection and return to this page.');
+                } else {
+                    // Desktop: Show QR code
+                    alert(`Please scan this QR code with your mobile wallet:\n${uri}`);
+                }
+            }
+            
+            const session = await approval();
+            console.log('WalletConnect session established:', session);
+            
+            // Set up provider for WalletConnect
+            provider = new window.ethers.providers.JsonRpcProvider(NETWORK_CONFIG.rpcUrl);
+            // Note: WalletConnect transactions require special handling
+            
+            updateUI();
+            return true;
+            
+        } catch (error) {
+            console.error("WalletConnect failed:", error);
+        }
+    }
+    
+    // Fallback message
+    alert("Please install a Web3 wallet like MetaMask, or use a wallet app that supports WalletConnect");
+    return false;
+}
+
+function updateUI() {
+    const connectBtn = document.getElementById("connect-wallet");
+    if (connectBtn) connectBtn.textContent = "Connected";
+    
+    const walletStatus = document.getElementById("wallet-status");
+    if (walletStatus && signer) {
+        signer.getAddress().then(address => {
+            walletStatus.textContent = `Connected: ${address.substring(0, 6)}...${address.substring(38)}`;
+        });
     }
 }
 
-export function isWalletInstalled() {
-    return !!window.ethereum;
-}
-
-export function getProvider() {
-    return provider;
-}
-
-export function getSigner() {
-    return signer;
-}
+export function getProvider() { return provider; }
+export function getSigner() { return signer; }
+export function isWalletInstalled() { return !!window.ethereum || !!walletConnectClient; }
