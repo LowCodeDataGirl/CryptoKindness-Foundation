@@ -1,5 +1,5 @@
 import { ethers } from 'https://cdn.skypack.dev/ethers@5.7.2';
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from '../utils/constants.js';
+import { CONTRACT_ADDRESS, CONTRACT_ABI } from 'src/js/utils/constants.js';
 export {withdrawAmount, withdrawAll, updateBalanceDisplay};
 
 function validateWithdrawAmount(amount) {
